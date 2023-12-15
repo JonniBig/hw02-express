@@ -1,69 +1,26 @@
 const express = require("express");
+
 const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-  addContactSchema,
-} = require("../../models/contacts");
+  getAllContactsController,
+  getContactByIdController,
+  addContactController,
+  deleteContactController,
+  updateContactController,
+  updateFavoriteContactController,
+} = require("../../controllers/controllers");
 
 const router = express.Router();
-router.get("/", async (req, res, next) => {
-  const contacts = await listContacts();
-  res.json(contacts);
-});
 
-router.get("/:contactId", async (req, res, next) => {
-  const contactId = req.params.contactId;
-  const contact = await getContactById(contactId);
-  if (!contact) {
-    res.status(404).json({ message: "Not found" });
-    return;
-  }
-  res.json(contact);
-});
+router.get("/", getAllContactsController);
 
-router.post("/", async (req, res, next) => {
-  const body = req.body;
+router.get("/:contactId", getContactByIdController);
 
-  const { error } = addContactSchema.validate(body);
+router.post("/", addContactController);
 
-  if (error) {
-    res.status(400).json({ message: "missing required name field" });
-    return;
-  }
+router.delete("/:contactId", deleteContactController);
 
-  const newContact = await addContact(body);
-  res.status(201).json(newContact);
-});
+router.put("/:contactId", updateContactController);
 
-router.delete("/:contactId", async (req, res, next) => {
-  const contactId = req.params.contactId;
-  const deletedContact = await removeContact(contactId);
-  if (!deletedContact) {
-    res.status(404).json({ message: "Not found" });
-    return;
-  }
-  res.json(deletedContact);
-});
-
-router.put("/:contactId", async (req, res, next) => {
-  const contactId = req.params.contactId;
-  const body = req.body;
-  const { error } = addContactSchema.validate(body);
-
-  if (error) {
-    res.status(400).json({ message: "missing required name field" });
-    return;
-  }
-
-  const updatedContact = await updateContact(contactId, body);
-  if (!updatedContact) {
-    res.status(404).json({ message: "Not found" });
-    return;
-  }
-  res.json(updatedContact);
-});
+router.patch("/:contactId/favorite", updateFavoriteContactController);
 
 module.exports = router;

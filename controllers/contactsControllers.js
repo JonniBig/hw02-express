@@ -1,9 +1,7 @@
 const { isValidObjectId } = require("mongoose");
 const {
-  Contact,
-  addContactSchema,
-  updateFavoriteSchema,
-} = require("../models/contacts");
+  contacts: { Contact, addContactSchema, updateFavoriteSchema },
+} = require("../models");
 
 const getAllContactsController = async (req, res, next) => {
   const contacts = await Contact.find();

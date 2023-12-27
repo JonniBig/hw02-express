@@ -4,7 +4,12 @@ const {
 } = require("../models");
 
 const getAllContactsController = async (req, res, next) => {
-  const contacts = await Contact.find();
+  const { _id } = req.user;
+
+  const contacts = await Contact.find({ owner: _id }).populate(
+    "owner",
+    "email subscription"
+  );
   res.json(contacts);
 };
 
@@ -22,6 +27,8 @@ const getContactByIdController = async (req, res, next) => {
 };
 
 const addContactController = async (req, res, next) => {
+  const { _id } = req.user;
+
   const body = req.body;
 
   const { error } = addContactSchema.validate(body);
@@ -31,7 +38,7 @@ const addContactController = async (req, res, next) => {
     return;
   }
 
-  const newContact = await Contact.create(body);
+  const newContact = await Contact.create({ ...body, owner: _id });
   res.status(201).json(newContact);
 };
 

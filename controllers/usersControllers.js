@@ -91,6 +91,7 @@ const uploadAvatar = async (req, res, next) => {
   const { path: tmpPath, filename } = req.file;
 
   const newPath = path.join(avatarPath, filename);
+
   const oldPath = tmpPath;
 
   await fs.rename(oldPath, newPath);

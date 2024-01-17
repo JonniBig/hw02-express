@@ -1,5 +1,6 @@
 const app = require("./app");
 const mongoose = require("mongoose");
+const { sendEmail } = require("./helpers/sendEmail");
 
 const DB_HOST = process.env.DB_HOST || "";
 

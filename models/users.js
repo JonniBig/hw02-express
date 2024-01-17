@@ -9,6 +9,10 @@ const userBodySchema = Joi.object({
   email: Joi.string().pattern(emailValidateRegex).required(),
 });
 
+const userVerifySchema = Joi.object({
+  email: Joi.string().pattern(emailValidateRegex).required(),
+});
+
 const userSchema = new Schema({
   password: {
     type: String,
@@ -27,6 +31,20 @@ const userSchema = new Schema({
   },
   avatarURL: String,
   token: String,
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
+});
+
+userSchema.post("save", (error, data, next) => {
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    next(new Error("some mongo error happened"));
+  }
 });
 
 const User = model("user", userSchema);
@@ -34,4 +52,5 @@ const User = model("user", userSchema);
 module.exports = {
   User,
   userBodySchema,
+  userVerifySchema,
 };
